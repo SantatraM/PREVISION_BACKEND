@@ -1,22 +1,25 @@
-"""
-URL configuration for previsionBack project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
 from django.urls import path
+from station.views import find_sous_bassin_by_id
+from station.views import find_sous_bassin
+from station.views import create_sous_bassin
+from station.views import update_sous_bassin
+from station.views import delete_sous_bassin
+from station.views import find_mesure_by_id
+from station.views import find_mesure
+from station.views import create_mesure
+from station.views import update_mesure
+from station.views import delete_mesure
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('sousbassin/<str:idsousbassin>/', find_sous_bassin_by_id, name='find_sous_bassin_by_id'),
+    path('sousbassins/', find_sous_bassin, name='find_sous_bassin'),
+    path('createSousBassin/', create_sous_bassin, name='create_sous_bassin'),
+    path('updateSousBassin/',update_sous_bassin,name='update_sous_bassin'),
+    path('deleteSousBassin/<str:idsousbassin>/',delete_sous_bassin,name='delete_sous_bassin'),
+
+    path('mesure/<str:idmesure>/', find_mesure_by_id, name='find_mesure_by_id'),
+    path('mesures/', find_mesure, name='find_mesure'),
+    path('createMesure/', create_mesure, name='create_mesure'),
+    path('updateMesure/',update_mesure,name='update_mesure'),
+    path('deleteMesure/<str:idmesure>/',delete_mesure,name='delete_mesure'),
 ]
