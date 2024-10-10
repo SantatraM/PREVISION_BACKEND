@@ -134,7 +134,7 @@ def find_station(request):
         return Response({'error': str(e)} , status=500)
     
 @api_view(['POST'])
-def create_mesure(request):
+def create_station(request):
     try:
         site = request.data.get('site')
         idsousbassin = request.data.get('idsousbassin')
