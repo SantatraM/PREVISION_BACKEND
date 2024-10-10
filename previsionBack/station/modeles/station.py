@@ -28,7 +28,7 @@ class Station(models.Model):
     def get_station(self):
         try:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM station"
+                sql = "SELECT * FROM v_station"
                 cursor.execute(sql)
                 result = dispatchall(cursor)
             return result if result else []

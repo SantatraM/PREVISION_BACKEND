@@ -21,7 +21,7 @@ class Mesure(models.Model):
         except Exception as e:
             raise Exception(f"Error: {e}")
         
-    def get_mesure(self):
+    def get_mesure():
         try:
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM mesure"
