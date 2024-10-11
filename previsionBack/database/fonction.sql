@@ -13,3 +13,19 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION dispatchPluie()
+RETURNS VOID AS $$
+BEGIN
+
+    INSERT INTO pluiecrues(idstation,dateCrues,pluie)
+    SELECT DISTINCT pi.station,pi.dateCrues::timestamp,pi.pluie::float
+    from PluieImport pi 
+    where not EXISTS (
+        select 1 from pluiecrues pc
+        where pc.datecrues = pi.datecrues::timestamp
+        and pc.idstation = pi.station
+    );
+
+END;
+$$ LANGUAGE plpgsql;

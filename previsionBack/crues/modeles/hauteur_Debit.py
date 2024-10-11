@@ -1,7 +1,6 @@
 from django.db import models
 from formule.modeles.formule import Formuledebit
 import pandas as pd
-from django.db import connection
 from previsionBack.utils import requete
 from previsionBack.utils import insertion
 from rest_framework.response import Response
@@ -41,59 +40,35 @@ class Hauteurdebitcrues(models.Model):
             return debit
         except Exception as e:
             raise Exception(f"error: {e}")
-        
-    # def import_hauteur_debit(self,file,station,condition):
-    #     try:
-    #         if file.name.endswith('.csv'):
-    #             df = pd.read_csv(file)
-    #         elif file.name.endswith('.xls') or file.name.endswith('.xlsx'):
-    #             df = pd.read_excel(file)
-    #         else:
-    #             return Response({'error': 'Type de fichier non supporté.'}, status=201)
-    #         for _, row in df.iterrows():
-    #             dateCrues = row.get('Date')
-    #             hauteur = row.get('Hauteur')
-    #             if condition == '1':
-    #                 debit = self.calcul_debit_with_condition_by_id_station(hauteur,station)
-    #             else :
-    #                 debit = self.calcul_debit_without_condition_by_id_station(hauteur,station)
-                    
-    #             insertion("hauteurdebitimport",[station,dateCrues,hauteur,str(debit)])
-    #         requete("select dispatchHauteur()")
-    #         requete("truncate table hauteurdebitimport")
-    #         return True
-    #     except Exception as e:
-    #         raise Exception(f"error: {e}")
     
     def import_hauteur_debit(self, file, station, condition):
         try:
             if file.name.endswith('.csv'):
                 df = pd.read_csv(file)  
-                dfs = [df]  
+                dfs = [df]
             elif file.name.endswith('.xls') or file.name.endswith('.xlsx'):
-                xls = pd.ExcelFile(file) 
-                dfs = [xls.parse(sheet_name) for sheet_name in xls.sheet_names] 
+                xls = pd.ExcelFile(file)  
+                dfs = [xls.parse(sheet_name) for sheet_name in xls.sheet_names]
             else:
                 return Response({'error': 'Type de fichier non supporté.'}, status=201)
-
+            
             for df in dfs:
                 for _, row in df.iterrows():
                     dateCrues = row.get('Date')
                     hauteur = row.get('Hauteur')
-                    if condition == '1':
-                        debit = self.calcul_debit_with_condition_by_id_station(hauteur, station)
+                    
+                    if pd.isnull(hauteur):
+                        hauteur = None
+                        debit = None
                     else:
-                        debit = self.calcul_debit_without_condition_by_id_station(hauteur, station)
-
-                    insertion("hauteurdebitimport", [station, dateCrues, hauteur, str(debit)])
-
+                        if condition == '1':
+                            debit = self.calcul_debit_with_condition_by_id_station(hauteur, station)
+                        else:
+                            debit = self.calcul_debit_without_condition_by_id_station(hauteur, station)
+                    insertion("hauteurdebitimport", [station, dateCrues, hauteur, str(debit) if debit is not None else None])
             requete("select dispatchHauteur()")
             requete("truncate table hauteurdebitimport")
-            
             return True
-
         except Exception as e:
             raise Exception(f"error: {e}")
-    
-
-            
+        
