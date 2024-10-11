@@ -15,6 +15,7 @@ from station.views import create_station
 from station.views import update_station
 from formule.views import find_formule_with_variable
 from formule.views import find_formule_with_condition
+from crues.views import import_hauteur_debit
 
 urlpatterns = [
     path('sousbassin/<str:idsousbassin>/', find_sous_bassin_by_id, name='find_sous_bassin_by_id'),
@@ -36,4 +37,6 @@ urlpatterns = [
     
     path('formules/',find_formule_with_variable,name='find_formule_with_variable'),
     path('formule/',find_formule_with_condition,name='find_formule_with_condition'),
+    
+    path('importHauteurDebit/',import_hauteur_debit,name='import_hauteur_debit'),
 ]

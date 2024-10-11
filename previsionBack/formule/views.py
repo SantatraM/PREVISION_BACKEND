@@ -77,6 +77,7 @@ def find_formule_with_condition(request):
     try:
         formule = Formuledebit()
         result = formule.get_formule_debit_with_condition(hauteur=1.3,idstation='STAT1')
+        print(result.get('idformule'))
         return Response({'data':result},status=200)
     except Exception as e:
         print(e)

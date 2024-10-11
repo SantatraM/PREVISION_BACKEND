@@ -90,6 +90,7 @@ class Formuledebit(models.Model):
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM v_formule_variable where %s <= condition and idstation= %s order by condition asc"
                 cursor.execute(sql,[hauteur,idstation])
+                print(sql)
                 result = dispatchall(cursor)
                 for item in result:
                     formule = item['formule']
@@ -100,11 +101,12 @@ class Formuledebit(models.Model):
         except Exception as e:
             raise Exception(f"error: {e}")
         
-    def get_formule_debit_without_condition(self,hauteur):
+    def get_formule_debit_without_condition(self,hauteur,idstation):
         try:
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM v_formule_variable where %s <= condition and idstation= %s order by condition desc"
-                cursor.execute(sql,[hauteur,self.idstation])
+                cursor.execute(sql,[hauteur,idstation])
+                print(sql)
                 result = dispatchall(cursor)
                 for item in result:
                     formule = item['formule']
