@@ -5,6 +5,7 @@ from previsionBack.utils import requete
 from previsionBack.utils import insertion
 from rest_framework.response import Response
 from station.modeles.station import Station
+from django.db import connection
 
 class Hauteurdebitcrues(models.Model):
     id = models.CharField(primary_key=True)
@@ -71,4 +72,13 @@ class Hauteurdebitcrues(models.Model):
             return True
         except Exception as e:
             raise Exception(f"error: {e}")
+        
+    def update_hauteur_debit(self,hauteur,debit):
+        try:
+            with connection.cursor() as cursor:
+                sql = "UPDATE hauteurdebitcrues set hauteur= %s , debit = %s where id = %s"
+                cursor.execute(sql,[hauteur,debit,self.id])
+                return True
+        except Exception as e:
+            raise Exception(f"Error updating hauteur_debit: {e}")
         

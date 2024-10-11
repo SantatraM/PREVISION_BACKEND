@@ -4,6 +4,7 @@ import pandas as pd
 from rest_framework.response import Response
 from previsionBack.utils import requete
 from previsionBack.utils import insertion
+from django.db import connection
 
 class Pluiecrues(models.Model):
     id = models.CharField(primary_key=True)
@@ -37,3 +38,13 @@ class Pluiecrues(models.Model):
             return True               
         except Exception as e:
             raise Exception(f"error: {e}")
+        
+    def update_pluie(self,pluie):
+        try:
+            with connection.cursor() as cursor:
+                sql = "UPDATE pluiecrues set pluie= %s where id = %s"
+                cursor.execute(sql,[pluie,self.id])
+                return True
+        except Exception as e:
+            raise Exception(f"Error updating pluie: {e}")
+        

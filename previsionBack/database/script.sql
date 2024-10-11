@@ -77,5 +77,11 @@ create table variableFormule(
     valeur float
 );
 
-
+create sequence seqSeuil;
+create table seuil(
+    idSeuil varchar default concat('SEU' || nextval('seqSeuil')) primary key,
+    idStation varchar references station(idStation),
+    rouge float,
+    jaune float
+);
 
