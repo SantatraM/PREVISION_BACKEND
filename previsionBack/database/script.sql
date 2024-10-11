@@ -76,3 +76,6 @@ create table variableFormule(
     variable varchar(5),
     valeur float
 );
+
+
+

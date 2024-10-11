@@ -1,10 +1,12 @@
 from django.db import models
 from django.db import connection
 from previsionBack.utils import dispatchall
+import re
+from station.modeles.station import Station
 
 class Formuledebit(models.Model):
     id = models.CharField(primary_key=True)
-    idstation = models.ForeignKey('Station', models.DO_NOTHING, db_column='idstation', blank=True, null=True)
+    idstation = models.ForeignKey(Station, on_delete=models.CASCADE) 
     condition = models.FloatField(blank=True, null=True)
     formule = models.CharField(blank=True, null=True)
 
@@ -58,4 +60,57 @@ class Formuledebit(models.Model):
                 return True
         except Exception as e:
             raise Exception(f"Error deleting formule: {e}")
+      
+    def format_formule(self,formule, variables_valeurs):
+        """Remplace les variables dans la formule par leurs valeurs."""
+        if variables_valeurs:
+            for variable_valeur in variables_valeurs.split(','):
+                if '=' in variable_valeur:
+                    variable, valeur = variable_valeur.split('=')
+                    formule = re.sub(r'\b{}\b'.format(variable.strip()), valeur.strip(), formule)
+        return formule
+      
+    def get_formule_with_variable(self):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM v_formule_variable"
+                cursor.execute(sql)
+                result = dispatchall(cursor)
+                for item in result:
+                    formule = item['formule']
+                    variables_valeurs = item.get('variables_valeurs', '')
+                    formule_finale = self.format_formule(formule, variables_valeurs)
+                    item['formulefinal'] = formule_finale
+                return result if result else []
+        except Exception as e:
+            raise Exception(f"Error: {e}")   
+
+    def get_formule_debit_with_condition(self,hauteur,idstation):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM v_formule_variable where %s <= condition and idstation= %s order by condition asc"
+                cursor.execute(sql,[hauteur,idstation])
+                result = dispatchall(cursor)
+                for item in result:
+                    formule = item['formule']
+                    variables_valeurs = item.get('variables_valeurs','')
+                    formule_finale = self.format_formule(formule,variables_valeurs)
+                    item['formulefinal'] = formule_finale
+                return result[0] if result else []
+        except Exception as e:
+            raise Exception(f"error: {e}")
         
+    def get_formule_debit_without_condition(self,hauteur):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM v_formule_variable where %s <= condition and idstation= %s order by condition desc"
+                cursor.execute(sql,[hauteur,self.idstation])
+                result = dispatchall(cursor)
+                for item in result:
+                    formule = item['formule']
+                    variables_valeurs = item.get('variables_valeurs','')
+                    formule_finale = self.format_formule(formule,variables_valeurs)
+                    item['formulefinal'] = formule_finale
+                return result[0] if result else []
+        except Exception as e:
+            raise Exception(f"error: {e}")

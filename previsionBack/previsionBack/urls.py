@@ -13,6 +13,8 @@ from station.views import find_station_by_id
 from station.views import find_station
 from station.views import create_station
 from station.views import update_station
+from formule.views import find_formule_with_variable
+from formule.views import find_formule_with_condition
 
 urlpatterns = [
     path('sousbassin/<str:idsousbassin>/', find_sous_bassin_by_id, name='find_sous_bassin_by_id'),
@@ -31,4 +33,7 @@ urlpatterns = [
     path('stations/', find_station, name='find_station'),
     path('createStation/', create_station, name='create_station'),
     path('updateStation/',update_station,name='update_station'),
+    
+    path('formules/',find_formule_with_variable,name='find_formule_with_variable'),
+    path('formule/',find_formule_with_condition,name='find_formule_with_condition'),
 ]
