@@ -141,9 +141,10 @@ def create_station(request):
         longitude = float(request.data.get('longitude'))
         latitude = float(request.data.get('latitude'))
         idmesure = request.data.get('idmesure')
+        code = request.data.get('code')
 
-        new_station = Station(site = site , idsousbassin = idsousbassin , longitude = longitude , latitude = latitude ,idmesure = idmesure)
-        new_station.insert_station()
+        new_station = Station(site = site , longitude = longitude , latitude = latitude , code = code)
+        new_station.insert_station(idsousbassin,idmesure)
         return Response({'message': 'Station created successfully.'}, status=201)
     except Exception as e:
         print(e)

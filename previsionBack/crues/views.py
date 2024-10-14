@@ -28,9 +28,12 @@ def create_crues(request):
     try:
         idstation = request.data.get('idstation')
         datecrues = request.data.get('datecrues')
-        hauteur = float(request.data.get('hauteur')) if hauteur else None
-        debit = float(request.data.get('debit')) if debit else None
-        pluie = float(request.data.get('pluie')) if pluie else None
+        hauteur = request.data.get('hauteur')
+        hauteur = float(hauteur) if hauteur else None
+        debit =request.data.get('debit')
+        debit = float(debit) if debit else None
+        pluie = request.data.get('pluie')
+        pluie = float(pluie) if pluie else None
         
         new_crues = Crues()
         new_crues.insert_crues(hauteur,debit,pluie,idstation,datecrues)

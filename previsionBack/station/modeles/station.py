@@ -10,6 +10,7 @@ class Station(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     idmesure = models.ForeignKey('Mesure', models.DO_NOTHING, db_column='idmesure', blank=True, null=True)
+    code = models.CharField(max_length=150, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -38,8 +39,8 @@ class Station(models.Model):
     def insert_station(self,idsousbassin,idmesure):
         try:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO station (site,idsousbassin,longitude,latitude,idmesure) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sql, [self.site,idsousbassin,self.longitude,self.latitude,idmesure])
+                sql = "INSERT INTO station (site,idsousbassin,longitude,latitude,idmesure,code) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql, [self.site,idsousbassin,self.longitude,self.latitude,idmesure,self.code])
                 return True
         except Exception as e:
             raise Exception(f"Error inserting station: {e}")

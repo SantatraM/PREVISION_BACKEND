@@ -2,8 +2,8 @@ from django.db import models
 from previsionBack.utils import requete
 from previsionBack.utils import insertion
 from previsionBack.utils import dispatchall
-from pluie import Pluiecrues
-from hauteur_Debit import Hauteurdebitcrues
+from .pluie import Pluiecrues
+from .hauteur_Debit import Hauteurdebitcrues
 from django.db import connection
 
 class Crues(models.Model):

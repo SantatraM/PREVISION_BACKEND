@@ -20,7 +20,8 @@ create table station(
     idSousBassin varchar references sousBassin(idSousBassin),
     longitude float,
     latitude float,
-    idMesure varchar references mesure(idMesure)
+    idMesure varchar references mesure(idMesure),
+    code varchar
 );
 
 create table stationImport(
@@ -84,4 +85,5 @@ create table seuil(
     rouge float,
     jaune float
 );
+
 
