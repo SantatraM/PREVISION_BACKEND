@@ -164,9 +164,10 @@ def update_station(request):
         longitude = float(request.data.get('longitude'))
         latitude = float(request.data.get('latitude'))
         idmesure = float(request.data.get('idmesure'))
+        code = request.data.get('code')
 
-        new_station = Station(site = site ,idsousbassin = idsousbassin, longitude = longitude , latitude = latitude , idmesure = idmesure, idstation = idstation )
-        new_station.update_station()
+        new_station = Station(site = site , longitude = longitude , latitude = latitude , idstation = idstation , code = code)
+        new_station.update_station(idsousbassin,idmesure)
         return Response({'message': 'Station updated successfully.'} , status=201)
     except Exception as e:
         print(e)

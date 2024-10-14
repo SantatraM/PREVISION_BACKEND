@@ -45,11 +45,11 @@ class Station(models.Model):
         except Exception as e:
             raise Exception(f"Error inserting station: {e}")
     
-    def update_station(self):
+    def update_station(self,idsousbassin,idmesure):
         try:
             with connection.cursor() as cursor:
-                sql = "UPDATE station set site= %s , idsousbassin = %s , longitude = %s , latitude = %s , idmesure = %s where idstation = %s"
-                cursor.execute(sql,[self.site,self.idsousbassin,self.longitude,self.latitude,self.idmesure,self.idstation])
+                sql = "UPDATE station set site= %s , idsousbassin = %s , longitude = %s , latitude = %s , idmesure = %s , code = %s where idstation = %s"
+                cursor.execute(sql,[self.site,idsousbassin,self.longitude,self.latitude,idmesure,self.code,self.idstation])
                 return True
         except Exception as e:
             raise Exception(f"Error updating station: {e}")
