@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from .modeles.sousBassin import Sousbassin
 from .modeles.mesure import Mesure
 from .modeles.station import Station
+from rest_framework import status
 
 @api_view(['GET'])  
 def find_sous_bassin_by_id(request, idsousbassin):
@@ -138,17 +139,21 @@ def create_station(request):
     try:
         site = request.data.get('site')
         idsousbassin = request.data.get('idsousbassin')
-        longitude = float(request.data.get('longitude'))
-        latitude = float(request.data.get('latitude'))
+        longitude = request.data.get('longitude')
+        latitude = request.data.get('latitude')
         idmesure = request.data.get('idmesure')
         code = request.data.get('code')
-
-        new_station = Station(site = site , longitude = longitude , latitude = latitude , code = code)
-        new_station.insert_station(idsousbassin,idmesure)
-        return Response({'message': 'Station created successfully.'}, status=201)
+        try:
+            longitude = float(longitude)
+            latitude = float(latitude)
+        except ValueError:
+            return Response({'error': 'Longitude and latitude must be valid numbers.'}, status=400)
+        new_station = Station(site=site,longitude=longitude,latitude=latitude,code=code)
+        new_station.insert_station(idsousbassin, idmesure)
+        return Response({'message': 'Station created successfully.'}, status=status.HTTP_201_CREATED)
     except Exception as e:
         print(e)
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': 'An error occurred while creating the station.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
 def update_station(request):
