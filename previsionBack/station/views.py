@@ -163,7 +163,7 @@ def update_station(request):
         idsousbassin = request.data.get('idsousbassin')
         longitude = float(request.data.get('longitude'))
         latitude = float(request.data.get('latitude'))
-        idmesure = float(request.data.get('idmesure'))
+        idmesure = (request.data.get('idmesure'))
         code = request.data.get('code')
 
         new_station = Station(site = site , longitude = longitude , latitude = latitude , idstation = idstation , code = code)
