@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'station',
     'formule',
     'crues',
+    'map',
+    'prevision',
 ]
 
 MIDDLEWARE = [

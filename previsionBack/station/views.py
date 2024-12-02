@@ -134,6 +134,16 @@ def find_station(request):
         print(e)
         return Response({'error': str(e)} , status=500)
     
+@api_view(['GET'])
+def find_station_without_seuil(request):
+    try:
+        stations = Station()
+        results = stations.get_station_without_seuil()
+        return Response({'data': results},status=200)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)} , status=500)
+    
 @api_view(['POST'])
 def create_station(request):
     try:
@@ -165,7 +175,11 @@ def update_station(request):
         latitude = float(request.data.get('latitude'))
         idmesure = (request.data.get('idmesure'))
         code = request.data.get('code')
-
+        try:
+            longitude = float(longitude)
+            latitude = float(latitude)
+        except ValueError:
+            return Response({'error': 'Longitude and latitude must be valid numbers.'}, status=400)
         new_station = Station(site = site , longitude = longitude , latitude = latitude , idstation = idstation , code = code)
         new_station.update_station(idsousbassin,idmesure)
         return Response({'message': 'Station updated successfully.'} , status=201)

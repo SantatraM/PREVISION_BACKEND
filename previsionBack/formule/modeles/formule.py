@@ -34,11 +34,11 @@ class Formuledebit(models.Model):
         except Exception as e:
             raise Exception(f"Error: {e}")
         
-    def insert_formule(self):
+    def insert_formule(self,idstation):
         try:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO formule (idstation,condition,formule) VALUES (%s,%s,%s)"
-                cursor.execute(sql, [self.idstation,self.condition,self.formule])
+                sql = "INSERT INTO formuledebit (idstation,condition,formule) VALUES (%s,%s,%s)"
+                cursor.execute(sql, [idstation,self.condition,self.formule])
                 return True
         except Exception as e:
             raise Exception(f"Error inserting formule: {e}")

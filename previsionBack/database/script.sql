@@ -23,6 +23,9 @@ create table station(
     idMesure varchar references mesure(idMesure),
     code varchar
 );
+ALTER TABLE station
+ADD CONSTRAINT unique_site UNIQUE (site);
+
 
 create table stationImport(
     site varchar,
@@ -85,5 +88,37 @@ create table seuil(
     rouge float,
     jaune float
 );
+
+
+CREATE TABLE public.rivieres AS
+SELECT * FROM public.ikopa
+UNION ALL
+SELECT * FROM public.mamba
+UNION ALL
+SELECT * FROM public.sisaony;
+
+create sequence seqCommuneStation;
+create table communeStation(
+    id varchar default concat('COMS' || nextval('seqCommuneStation')) primary key,
+    idStation varchar references station(idStation),
+    idCommune int references commune(id)
+);
+
+create sequence seqRivieres;
+create table riviere (
+    id varchar default concat('RIV' || nextval('seqRivieres')) primary key,
+    nom varchar
+);
+
+-- pour voir les stations concernees lorsqu'on va faire le prevision d'un riviere
+create sequence seqPrevisionParRivieres;
+create table previsionParRivieres(
+    id varchar default concat('PREV' || nextval('seqPrevisionParRivieres')) primary key,
+    idriviere varchar references riviere(id),
+    stationDeDonnee varchar references station(idStation),
+    stationAPrevoir varchar references station(idStation)
+);
+
+
 
 

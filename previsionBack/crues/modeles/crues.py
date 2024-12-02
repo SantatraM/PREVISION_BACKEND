@@ -45,16 +45,27 @@ class Crues(models.Model):
             return result if result else []
         except Exception as e:
             raise Exception(f"Error: {e}")
+        
+    def get_crues_by_one_date(self,date,idstation):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM v_crues where datecrues::date = %s and idstation = %s order by datecrues asc"
+                cursor.execute(sql,[date,idstation])
+                result = dispatchall(cursor)
+            return result if result else []
+        except Exception as e:
+            raise Exception(f"Error:{e}")
 
     def get_today_crues(self,idstation):
         try:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM v_crues where datecrues::date = current_date and idstation = %s order by datecrues asc"
+                sql = "SELECT * FROM v_crues where datecrues >= CURRENT_DATE  and idstation = %s order by datecrues asc"
                 cursor.execute(sql,[idstation])
                 result = dispatchall(cursor)
             return result if result else []
         except Exception as e:
             raise Exception(f"Error: {e}")
+
         
     def search_crues(self,idstation,hauteur,debit,pluie):
         try:

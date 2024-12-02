@@ -31,8 +31,8 @@ def create_formule(request):
         idstation = request.data.get('idstation')
         condition = float(request.data.get('condition'))
         formule = request.data.get('formule')
-        new_formule = Formuledebit(idstation=idstation,condition = condition , formule = formule)
-        new_formule.insert_formule()
+        new_formule = Formuledebit(condition = condition , formule = formule)
+        new_formule.insert_formule(idstation)
         return Response({'message': 'formule created successfully.'}, status=201)
     except Exception as e:
         print(e)

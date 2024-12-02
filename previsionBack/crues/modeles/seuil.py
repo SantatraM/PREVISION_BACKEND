@@ -42,11 +42,11 @@ class Seuil(models.Model):
         except Exception as e:
             raise Exception(f"Error inserting seuil: {e}")
         
-    def update_seuil(self,idstation):
+    def update_seuil(self):
         try:
             with connection.cursor() as cursor:
-                sql = "UPDATE seuil set rouge= %s , jaune = %s , idstation = %s where idseuil = %s"
-                cursor.execute(sql,[self.rouge,self.jaune,idstation])
+                sql = "UPDATE seuil set rouge= %s , jaune = %s where idseuil = %s"
+                cursor.execute(sql,[self.rouge,self.jaune,self.idseuil])
                 return True
         except Exception as e:
             raise Exception(f"Error updating seuil: {e}")
@@ -59,3 +59,5 @@ class Seuil(models.Model):
                 return True
         except Exception as e:
             raise Exception(f"Error deleting seuil: {e}")
+        
+        

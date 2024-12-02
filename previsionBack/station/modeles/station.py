@@ -36,6 +36,16 @@ class Station(models.Model):
         except Exception as e:
             raise Exception(f"Error: {e}")
         
+    def get_station_without_seuil(self):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM v_station_sans_seuil"
+                cursor.execute(sql)
+                result = dispatchall(cursor)
+            return result if result else []
+        except Exception as e:
+            raise Exception(f"Error: {e}")
+        
     def insert_station(self,idsousbassin,idmesure):
         try:
             with connection.cursor() as cursor:
