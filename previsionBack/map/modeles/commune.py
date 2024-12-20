@@ -1,6 +1,7 @@
 from django.db import models
 from django.db import connection
 from previsionBack.utils import dispatchall
+from django.core.paginator import Paginator
 
 class Commune(models.Model):
     geom = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -20,7 +21,7 @@ class Commune(models.Model):
     def get_commune(self):
         try:
             with connection.cursor() as cursor:
-                sql = "SELECT c.id,ST_AsGeoJSON(c.geom) as geom, c.nom_commun FROM v_commune_analamanga c left join communeStation cs ON cs.idCommune = c.id where cs.idcommune is null"
+                sql = "SELECT c.id,ST_AsGeoJSON(c.geom) as geom, c.nom_commun FROM v_commune_analamanga c left join communeStation cs ON cs.idCommune = c.id where cs.idcommune is null ORDER BY c.nom_commun ASC"
                 cursor.execute(sql)
                 result = dispatchall(cursor)
             return result if result else []
@@ -107,3 +108,22 @@ class Commune(models.Model):
             cursor.execute(sql)
             result = cursor.fetchone()
             return result[0]
+        
+    def get_commune_station(self):
+        try:
+            with connection.cursor() as cursor:
+                sql = "select * from v_commune_station"
+                cursor.execute(sql)
+                result = dispatchall(cursor)
+            return result if result else []
+        except Exception as e:
+            raise Exception(f"Error: {e}")
+        
+    def delete_commune(self,idstation,idcommune):
+        try:
+            with connection.cursor() as cursor:
+                sql = "DELETE FROM communestation where idstation= %s and idcommune=%s"
+                cursor.execute(sql,[idstation,idcommune])
+                return True
+        except Exception as e:
+            raise Exception(f"Error: {e}")

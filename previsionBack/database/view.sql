@@ -23,7 +23,7 @@ create or replace view v_seuil as
     from seuil s
     join station st on st.idStation = s.idStation;
 
-create or replace view v_station_sans_seuil as 
+create or replace view v_station_sans_seuil as station
     SELECT st.*
     FROM station st
     WHERE NOT EXISTS (
@@ -102,29 +102,33 @@ JOIN station s1 ON s1.idStation = ppr.stationDeDonnee
 JOIN station s2 ON s2.idStation = ppr.stationAPrevoir
 JOIN riviere r ON r.id = ppr.idriviere;
 
-
-CREATE OR REPLACE VIEW v_commune_station AS
-SELECT 
-    s.idstation AS station_id,
-    s.site AS station_name,
-    COALESCE(
-        ARRAY_AGG(cm.nom_commun ORDER BY c.idcommune),
-        ARRAY[]::varchar[]
-    ) AS communes
-FROM 
-    station s
-LEFT JOIN 
-    communeStation c
-ON 
-    s.idstation = c.idstation
-left join commune cm on cm.id = c.idcommune
-GROUP BY 
-    s.idstation, s.site;
-
-
 CREATE VIEW v_prevision_par_rivieres AS
 SELECT p.id,p.idriviere,r.nom AS nom_riviere,  p.stationDeDonnee,s1.site AS station_de_donnee,  p.stationAPrevoir,s2.site AS station_a_prevoir  
 FROM previsionParRivieres p
 JOIN riviere r ON p.idriviere = r.id
 JOIN station s1 ON p.stationDeDonnee = s1.idStation
 JOIN station s2 ON p.stationAPrevoir = s2.idStation;
+
+create or replace view v_riviere_non_prise as
+select r.*
+from riviere r 
+where not EXISTS (
+    select 1 from previsionparrivieres ppr where ppr.idriviere = r.id
+);
+
+
+CREATE OR REPLACE VIEW v_commune_station AS
+SELECT 
+    c.idstation,
+    s.site AS station,
+    json_agg(
+        jsonb_build_object(
+            'commune', cm.nom_commun,
+            'idcommune', cm.id
+        )
+    ) AS communes_info
+FROM station s
+JOIN communeStation c ON s.idstation = c.idstation
+JOIN commune cm ON cm.id = c.idcommune
+GROUP BY c.idstation, s.site;
+station

@@ -12,7 +12,7 @@ def find_commune(request):
         result = communes.get_commune()
         return Response({'data': result},status=200) 
     except Exception as e:
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
 @api_view(['GET'])
 def find_All_commune(request):
@@ -21,7 +21,7 @@ def find_All_commune(request):
         result = communes.get_All_Commune()
         return Response({'data': result},status=200) 
     except Exception as e:
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
 @api_view(['GET'])
 def find_Rivieres(request):
@@ -51,7 +51,7 @@ def find_commune_with_vigilence(request):
         result = communes.get_commune_with_vigilence()
         return Response({'data': result},status=200) 
     except Exception as e:
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
 @api_view(['GET'])
 def find_commune_with_alert(request):
@@ -60,7 +60,7 @@ def find_commune_with_alert(request):
         result = communes.get_commune_with_alert()
         return Response({'data': result},status=200) 
     except Exception as e:
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
 
 @api_view(['GET'])
@@ -125,3 +125,43 @@ def find_Riviere(request):
         return Response({'data': result},status=200) 
     except Exception as e:
         return Response({'error': str(e)},status=200)
+    
+@api_view(['POST'])
+def create_riviere(request):
+    try:
+        nomRiviere = request.data['riviere']
+        print(nomRiviere)
+        rivieres = Rivieres()
+        result = rivieres.insert_riviere(nomRiviere)
+        return Response({'data':result},status=200)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e) }, status=200)
+    
+@api_view(['GET'])
+def find_Riviere_non_prise(request):
+    try:
+        rivieres = Rivieres()
+        result = rivieres.get_Riviere_non_prise()
+        return Response({'data': result},status=200) 
+    except Exception as e:
+        return Response({'error': str(e)},status=200)
+    
+@api_view(['GET'])
+def find_commune_station(request):
+    try:
+        communes = Commune()
+        result = communes.get_commune_station()
+        return Response({'data': result},status=200) 
+    except Exception as e:
+        return Response({'error': str(e)},status=200)    
+
+@api_view(['GET'])
+def delete_commune(request,idstation,idcommune):
+    try:
+        commune = Commune()
+        commune.delete_commune(idstation,idcommune)
+        return Response({'message': 'success.'}, status=201)
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)} , status=200)

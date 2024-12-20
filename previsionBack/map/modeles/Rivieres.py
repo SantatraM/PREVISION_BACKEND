@@ -42,3 +42,30 @@ class Rivieres(models.Model):
             return result if result else []
         except Exception as e:
             raise Exception(f"Error: {e}")
+        
+    def get_Riviere_non_prise(self):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * from v_riviere_non_prise"
+                print(sql)
+                cursor.execute(sql)
+                result = dispatchall(cursor)
+            return result if result else []
+        except Exception as e:
+            raise Exception(f"Error: {e}")
+        
+    def insert_riviere(self,nomRiviere):
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM riviere WHERE  LOWER(nom) = %s", [nomRiviere])
+                count = cursor.fetchone()[0]
+
+            if count > 0:
+                raise Exception("La rivière avec ce nom existe déjà.")
+            
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO riviere(nom) values (%s)"
+                cursor.execute(sql, [nomRiviere])
+                return True
+        except Exception as e:
+            raise Exception(f"Error:{e}")

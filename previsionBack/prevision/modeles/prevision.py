@@ -248,3 +248,30 @@ class Prevision(models.Model):
             return result if result else []
         except Exception as e:
             raise Exception(f"Error: {e}")
+        
+    def insert_prevision_riviere(self,idriviere,stationDeDonnee,stationAPrevoir):
+        try:
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO previsionParRivieres values (default,%s,%s,%s)"
+                cursor.execute(sql, [idriviere,stationDeDonnee,stationAPrevoir])
+                return True
+        except Exception as e:
+            raise Exception(f"Error:{e}")
+        
+    def update_prevision_riviere(self,id,stationDeDonnee,stationAPrevoir):
+        try:
+            with connection.cursor() as cursor:
+                sql = "UPDATE previsionparrivieres set stationdedonnee = %s , stationaprevoir = %s where id=%s"
+                cursor.execute(sql,[stationDeDonnee,stationAPrevoir,id])
+                return True
+        except Exception as e:
+            raise Exception(f"Error:{e}")
+        
+    def delete_prevision_riviere(self,id):
+        try:
+            with connection.cursor() as cursor:
+                sql = "DELETE FROM previsionparrivieres where id= %s"
+                cursor.execute(sql,[id])
+                return True
+        except Exception as e:
+            raise Exception(f"Error: {e}")

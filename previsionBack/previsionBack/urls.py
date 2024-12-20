@@ -27,9 +27,11 @@ from crues.views import create_crues
 from crues.views import filtre_crues
 from crues.views import filtre_crues_by_one_date
 from map.views import find_commune
+from map.views import find_commune_station
 from map.views import find_All_commune
 from map.views import find_Rivieres
 from map.views import find_Riviere
+from map.views import find_Riviere_non_prise
 from prevision.views import prevision_ambohimanambola
 from prevision.views import prevision12_ambohimanambola
 from map.views import insert_Communes_Station
@@ -46,6 +48,11 @@ from prevision.views import get_prevision_ambohimanambola
 from prevision.views import get_prevision12_ambohimanambola
 from prevision.views import find_stations_by_riviere
 from prevision.views import find_stations_previsions
+from prevision.views import create_prevision_riviere
+from prevision.views import update_prevision_riviere
+from prevision.views import delete_prevision_riviere
+from map.views import create_riviere
+from map.views import delete_commune
 
 urlpatterns = [
     path('sousbassin/<str:idsousbassin>/', find_sous_bassin_by_id, name='find_sous_bassin_by_id'),
@@ -82,6 +89,7 @@ urlpatterns = [
     path('Allcommunes/',find_All_commune,name='find_All_commune'),
     path('rivieres/',find_Rivieres,name='find_Rivieres'),
     path('riviere/',find_Riviere,name='find_Riviere'),
+    path('riviereNP/',find_Riviere_non_prise,name='find_Riviere_non_prise'),
     path('prevision/<str:station_id_ambohimanambola>/<str:station_id>/', prevision_ambohimanambola, name='prevision_ambohimanambola'),
     path('prevision12/<str:station_id_ambohimanambola>/<str:station_id>/', prevision12_ambohimanambola, name='prevision12_ambohimanambola'),
     
@@ -105,4 +113,10 @@ urlpatterns = [
     path('updateSeuil/',update_seuil,name='update_seuil'),
     path('createCrues/', create_crues, name='create_crues'),
     path('stationPrevision/', find_stations_previsions, name='find_stations_previsions'),
+    path('createRiviere/', create_riviere, name='create_riviere'),
+    path('createPrevisionRiviere/',create_prevision_riviere,name='create_prevision_riviere'),
+    path('updatePrevisionRiviere/',update_prevision_riviere,name='update_prevision_riviere'),
+    path('deletePrevisionRiviere/<str:id>/',delete_prevision_riviere,name='delete_prevision_riviere'),
+    path('communeStation/',find_commune_station,name='find_commune_station'),
+    path('deleteCommune/<str:idstation>/<str:idcommune>',delete_commune,name='delete_commune'),
 ]

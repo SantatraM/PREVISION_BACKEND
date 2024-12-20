@@ -22,7 +22,7 @@ def import_hauteur_debit(request):
         else:
             return Response({'error': 'Erreur d\'importation.'}, status=200)
     except Exception as e:
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': str(e)}, status=200)
 
 @api_view(['POST'])
 def create_crues(request):
@@ -41,7 +41,7 @@ def create_crues(request):
         return Response({'message': 'Crues created successfully.'}, status=201)
     except Exception as e:
         print(e)
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': str(e)}, status=200)
     
 @api_view(['GET'])
 def find_seuil(request):
@@ -50,7 +50,7 @@ def find_seuil(request):
         result = seuils.get_seuil()
         return Response({'data': result},status=200) 
     except Exception as e:
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
 @api_view(['GET'])
 def delete_seuil(request,idseuil):
@@ -60,7 +60,7 @@ def delete_seuil(request,idseuil):
         return Response({'message': 'Seuil deleted successfully.'}, status=201)
     except Exception as e:
         print(e)
-        return Response({'error': str(e)} , status=500)
+        return Response({'error': str(e)} , status=200)
     
 @api_view(['POST'])    
 def create_seuil(request):
@@ -70,7 +70,7 @@ def create_seuil(request):
         jaune = request.data.get('jaune')
         
         if not idstation or not rouge or not jaune:
-            return Response({'error': 'Tous les champs (idstation, rouge, jaune) sont requis.'}, status=200)
+            return Response({'error': 'Tous les champs sont requis.'}, status=200)
         
         try:
             rougeFloat = float(rouge)
@@ -109,7 +109,7 @@ def update_seuil(request):
         return Response({'message': 'Seuil updated successfully.'} , status=201)
     except Exception as e:
         print(e)
-        return Response({'error': str(e)},status=500)
+        return Response({'error': str(e)},status=200)
     
     
 @api_view(['GET'])

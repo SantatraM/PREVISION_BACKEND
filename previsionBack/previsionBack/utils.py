@@ -16,3 +16,5 @@ def insertion(table, values):
     print(query)
     with connection.cursor() as cursor:
         cursor.execute(query, values)
+        
+

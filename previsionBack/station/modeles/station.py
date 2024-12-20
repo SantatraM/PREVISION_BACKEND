@@ -26,6 +26,16 @@ class Station(models.Model):
         except Exception as e:
             raise Exception(f"Error: {e}")
         
+    def get_station_by_code(self):
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT idstation FROM station WHERE code = %s"
+                cursor.execute(sql, [self.code])
+                result = cursor.fetchone() 
+            return result[0] if result else None
+        except Exception as e:
+            raise Exception(f"Erreur lors de la récupération de la station avec le code '{self.code}': {e}")
+        
     def get_station(self):
         try:
             with connection.cursor() as cursor:
