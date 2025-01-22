@@ -82,14 +82,15 @@ class Hauteurdebitcrues(models.Model):
         except Exception as e:
             raise Exception(f"Error updating hauteur_debit: {e}")
         
-    def import_auto_hauteur_debit(filepath):
+    def import_auto_hauteur_debit(filename,filepath):
         try:
-            code_station = filepath[:6]
+            code_station = filename[:6]
+            print(f"code_station { code_station }")
             station = Station(code=code_station)
             idstation = station.get_station_by_code() 
             if not idstation:
                 raise Exception(f"Aucune station trouvée pour le code: {code_station}")
-
+            print(f"idstation = {idstation}")
             if filepath.endswith('.csv'):
                 data = pd.read_csv(filepath)
             elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
@@ -101,7 +102,7 @@ class Hauteurdebitcrues(models.Model):
                 datecrues = row.get('DATE')
                 hauteur = row.get('HAUTEUR')
                 debit = row.get('DEBIT')
-                insertion("hauteurdebitimport",[station, datecrues, hauteur,debit])
+                insertion("hauteurdebitimport",[idstation, datecrues, hauteur,debit])
             requete("SELECT dispatchHauteur()")
             requete("TRUNCATE TABLE hauteurdebitimport")
             return True

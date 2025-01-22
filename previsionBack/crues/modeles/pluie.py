@@ -39,44 +39,45 @@ class Pluiecrues(models.Model):
         except Exception as e:
             raise Exception(f"error: {e}")
         
-    def import_auto_pluie(filepath):
-        try:
-            code_station = filepath[:6]
-            station = Station(code=code_station)
-            idstation = station.get_station_by_code()
+    # def import_auto_pluie(filename,filepath):
+    #     try:
+    #         code_station = filename[:6]
+    #         station = Station(code=code_station)
+    #         idstation = station.get_station_by_code()
             
-            if not idstation:
-                raise Exception(f"Aucune station trouvée pour le code: {code_station}")
+    #         if not idstation:
+    #             raise Exception(f"Aucune station trouvée pour le code: {code_station}")
 
-            if filepath.endswith('.csv'):
-                data = pd.read_csv(filepath)
-            elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
-                data = pd.read_excel(filepath)
-            else:
-                raise Exception("Format de fichier non pris en charge. Utilisez un fichier CSV ou Excel.")
+    #         if filepath.endswith('.csv'):
+    #             data = pd.read_csv(filepath)
+    #         elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+    #             data = pd.read_excel(filepath)
+    #         else:
+    #             raise Exception("Format de fichier non pris en charge. Utilisez un fichier CSV ou Excel.")
             
-            if 'DATE' not in data.columns or 'VALEUR' not in data.columns:
-                raise Exception("Le fichier doit contenir les colonnes 'DATE' et 'VALEUR'.")
+    #         if 'DATE' not in data.columns or 'VALEUR' not in data.columns:
+    #             raise Exception("Le fichier doit contenir les colonnes 'DATE' et 'VALEUR'.")
             
-            data['DATE'] = pd.to_datetime(data['DATE'], format='%d/%m/%Y %H:%M')
+    #         data['DATE'] = pd.to_datetime(data['DATE'], format='%d/%m/%Y %H:%M')
 
-            # Regrouper les données par heure et sommer les valeurs de pluie
-            data['DATE_HOUR'] = data['DATE'].dt.strftime('%d/%m/%Y %H:00')  # Garde uniquement la date et l'heure
-            hourly_data = data.groupby('DATE_HOUR')['VALEUR'].sum().reset_index()
+    #         # Regrouper les données par heure et sommer les valeurs de pluie
+    #         data['DATE_HOUR'] = data['DATE'].dt.strftime('%d/%m/%Y %H:00')  # Garde uniquement la date et l'heure
+    #         print(f"date : {data['DATE_HOUR']}")
+    #         hourly_data = data.groupby('DATE_HOUR')['VALEUR'].sum().reset_index()
 
 
-            for _, row in hourly_data.iterrows():
-                datecrues = row['DATE_HOUR']
-                pluie = row['VALEUR']
-                insertion("pluieimport", [idstation, datecrues, pluie])
+    #         for _, row in hourly_data.iterrows():
+    #             datecrues = row['DATE_HOUR']
+    #             pluie = row['VALEUR']
+    #             insertion("pluieimport", [idstation, datecrues, pluie])
 
-            # Appeler la fonction de traitement et vider la table temporaire
-            requete("SELECT dispatchPluie()")  # Remplacez avec votre logique métier
-            requete("TRUNCATE TABLE pluieimport")
+    #         # Appeler la fonction de traitement et vider la table temporaire
+    #         requete("SELECT dispatchPluie()")  # Remplacez avec votre logique métier
+    #         requete("TRUNCATE TABLE pluieimport")
             
-            return True
-        except Exception as e:
-            raise Exception(f"Erreur lors de l'import automatique de pluie : {e}")
+    #         return True
+    #     except Exception as e:
+    #         raise Exception(f"Erreur lors de l'import automatique de pluie : {e}")
             
     def update_pluie(self,pluie):
         try:
@@ -87,3 +88,47 @@ class Pluiecrues(models.Model):
         except Exception as e:
             raise Exception(f"Error updating pluie: {e}")
         
+        
+    def import_auto_pluie(filename, filepath):
+        try:
+            code_station = filename[:6]
+            station = Station(code=code_station)
+            idstation = station.get_station_by_code()
+            
+            if not idstation:
+                raise Exception(f"Aucune station trouvée pour le code: {code_station}")
+
+            # Charger le fichier
+            if filepath.endswith('.csv'):
+                data = pd.read_csv(filepath)
+            elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+                data = pd.read_excel(filepath)
+            else:
+                raise Exception("Format de fichier non pris en charge. Utilisez un fichier CSV ou Excel.")
+
+            # Vérifier les colonnes
+            if 'DATE' not in data.columns or 'VALEUR' not in data.columns:
+                raise Exception("Le fichier doit contenir les colonnes 'DATE' et 'VALEUR'.")
+
+            # Convertir les dates
+            data['DATE'] = pd.to_datetime(data['DATE'], format='%d/%m/%Y %H:%M')
+
+            # Arrondir les dates à l'heure suivante
+            data['DATE_HOUR'] = data['DATE'].dt.ceil('H')  # Arrondit au plafond de l'heure
+
+            # Cumuler les valeurs par heure
+            hourly_data = data.groupby('DATE_HOUR')['VALEUR'].sum().reset_index()
+
+            # Insérer les données dans la base
+            for _, row in hourly_data.iterrows():
+                datecrues = row['DATE_HOUR'].strftime('%d/%m/%Y %H:00')
+                pluie = row['VALEUR']
+                insertion("pluieimport", [idstation, datecrues, pluie])
+
+            # Appeler la fonction de traitement et vider la table temporaire
+            requete("SELECT dispatchPluie()")  # Remplacez avec votre logique métier
+            requete("TRUNCATE TABLE pluieimport")
+
+            return True
+        except Exception as e:
+            raise Exception(f"Erreur lors de l'import automatique de pluie : {e}")

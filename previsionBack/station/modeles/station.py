@@ -31,6 +31,7 @@ class Station(models.Model):
             with connection.cursor() as cursor:
                 sql = "SELECT idstation FROM station WHERE code = %s"
                 cursor.execute(sql, [self.code])
+                print(f"code: {self.code}")
                 result = cursor.fetchone() 
             return result[0] if result else None
         except Exception as e:
